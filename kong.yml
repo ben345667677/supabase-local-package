@@ -1,0 +1,190 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: auth-v1-open
+    url: http://supabase-auth:9999/authorize
+    routes:
+      - name: auth-v1-open
+        paths: ["/auth/v1/authorize"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-callback
+    url: http://supabase-auth:9999/callback
+    routes:
+      - name: auth-v1-callback
+        paths: ["/auth/v1/callback"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-confirm
+    url: http://supabase-auth:9999/confirm
+    routes:
+      - name: auth-v1-confirm
+        paths: ["/auth/v1/confirm"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-hash
+    url: http://supabase-auth:9999/hash
+    routes:
+      - name: auth-v1-hash
+        paths: ["/auth/v1/hash"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-recover
+    url: http://supabase-auth:9999/recover
+    routes:
+      - name: auth-v1-recover
+        paths: ["/auth/v1/recover"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-token
+    url: http://supabase-auth:9999/token
+    routes:
+      - name: auth-v1-token
+        paths: ["/auth/v1/token"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-user
+    url: http://supabase-auth:9999/user
+    routes:
+      - name: auth-v1-user
+        paths: ["/auth/v1/user"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-users
+    url: http://supabase-auth:9999/users
+    routes:
+      - name: auth-v1-users
+        paths: ["/auth/v1/users"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-settings
+    url: http://supabase-auth:9999/settings
+    routes:
+      - name: auth-v1-settings
+        paths: ["/auth/v1/settings"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-magiclink
+    url: http://supabase-auth:9999/magiclink
+    routes:
+      - name: auth-v1-magiclink
+        paths: ["/auth/v1/magiclink"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-invite
+    url: http://supabase-auth:9999/invite
+    routes:
+      - name: auth-v1-invite
+        paths: ["/auth/v1/invite"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: auth-v1-logout
+    url: http://supabase-auth:9999/logout
+    routes:
+      - name: auth-v1-logout
+        paths: ["/auth/v1/logout"]
+        strip_path: false
+    plugins:
+      - name: cors
+
+  - name: rest-v1
+    url: http://supabase-rest:3000/
+    routes:
+      - name: rest-v1-all
+        paths: ["/rest/v1/"]
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: realtime-v1
+    url: http://supabase-realtime:4000/socket/
+    routes:
+      - name: realtime-v1-all
+        paths: ["/realtime/v1/"]
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: storage-v1
+    url: http://supabase-storage:5000/
+    routes:
+      - name: storage-v1-all
+        paths: ["/storage/v1/"]
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: functions-v1
+    url: http://supabase-edge-runtime:9999/
+    routes:
+      - name: functions-v1-all
+        paths: ["/functions/v1/"]
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: imgproxy-v1
+    url: http://imgproxy:5001/
+    routes:
+      - name: imgproxy-v1-all
+        paths: ["/image/v1/"]
+        strip_path: true
+    plugins:
+      - name: cors
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODQ4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+
+  - username: service_role
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4NDgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+
+plugins:
+  - name: request-transformer
+    service: rest-v1
+    config:
+      add:
+        headers:
+          - "apikey:$(headers:apikey)"
+          - "authorization:Bearer $(headers:apikey)"
+
+  - name: request-transformer
+    service: storage-v1
+    config:
+      add:
+        headers:
+          - "apikey:$(headers:apikey)"
+          - "authorization:Bearer $(headers:apikey)"
+
+  - name: request-transformer
+    service: functions-v1
+    config:
+      add:
+        headers:
+          - "apikey:$(headers:apikey)"
+          - "authorization:Bearer $(headers:apikey)"
