@@ -1,176 +1,174 @@
-# Supabase CLI (v1)
+# Supabase Local Development Environment
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main)
+סביבת פיתוח מקומית מותאמת של Supabase עם כל השירותים הנדרשים.
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
 
-This repository contains all the functionality for Supabase CLI.
+## תכונות
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Pushing your local changes to production
-- [x] Create and Deploy Supabase Functions
-- [ ] Manage your Supabase Account
-- [x] Manage your Supabase Projects
-- [x] Generating types directly from your database schema
-- [ ] Generating API and validation schemas from your database
+- ✅ PostgreSQL Database עם כל ההרחבות
+- ✅ Supabase Studio - ממשק ניהול ווב
+- ✅ Auth - מערכת אימות מלאה
+- ✅ REST API - PostgREST אוטומטי
+- ✅ Realtime - חיבורים אשפוזיים בזמן אמת
+- ✅ Storage - אחסון קבצים
+- ✅ Functions - פונקציות Edge
+- ✅ Mail Service - שירות מייל לפיתוח
+- ✅ Kong API Gateway - ניתוב API
 
-## Getting started
+## התקנה
 
-### Install the CLI
+**דרישות:** Docker Desktop, 4GB+ RAM
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
-
+### מקוון:
 ```bash
-npm i supabase --save-dev
+./setup-all.sh
 ```
 
-To install the beta release channel:
-
+### אופליין (שרתים ללא אינטרנט):
 ```bash
-npm i supabase@beta --save-dev
+# 1. הכן תלויות (מחשב עם אינטרנט)
+./prepare-offline.sh
+
+# 2. העבר קובץ זיפ לשרת והפעל
+./install-offline.sh
 ```
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
+## גישה לשירותים
 
-<details>
-  <summary><b>macOS</b></summary>
+| שירות | URL | תיאור |
+|--------|-----|------|
+| 🎨 Studio | http://localhost:54323 | ממשק ניהול |
+| 🔐 Auth | http://localhost:9999 | אימות משתמשים |
+| 🗄️ Database | localhost:54322 | PostgreSQL |
+| 📧 Mail Test | http://localhost:54324 | מייל טסט |
+| 🌐 API | http://localhost:54321 | Kong Gateway |
 
-  Available via [Homebrew](https://brew.sh). To install:
+## פרטי התחברות לבסיס נתונים
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+```
+Host: localhost
+Port: 54322
+Database: postgres
+User: postgres
+Password: postgres
+```
 
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
+## מפתחות API
 
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
+**מפתח אנונימי:**
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODQ4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+```
 
-<details>
-  <summary><b>Windows</b></summary>
+**מפתח שירות:**
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4NDgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+```
 
-  Available via [Scoop](https://scoop.sh). To install:
+## ניהול הפרויקט
 
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
-
-  To upgrade:
-
-  ```powershell
-  scoop update supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Linux</b></summary>
-
-  Available via [Homebrew](https://brew.sh) and Linux packages.
-
-  #### via Homebrew
-
-  To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-
-  #### via Linux packages
-
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
-
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
-
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
-
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
-
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
-
-<details>
-  <summary><b>Other Platforms</b></summary>
-
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
-
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
-
-  Add a symlink to the binary in `$PATH` for easier access:
-
-  ```sh
-  ln -s "$(go env GOPATH)/cli" /usr/bin/supabase
-  ```
-
-  This works on other non-standard Linux distros.
-</details>
-
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
-
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
-
-  ```bash
-  pkgx install supabase
-  ```
-
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
-
-### Run the CLI
-
+### כיבוי השירותים
 ```bash
-supabase help
+docker-compose -f docker-compose-simple.yml down
 ```
 
-Or using npx:
-
+### הפעלה מחדש
 ```bash
-npx supabase help
+docker-compose -f docker-compose-simple.yml up -d
 ```
 
-## Docs
-
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
-
-## Breaking changes
-
-The CLI is a WIP and we're still exploring the design, so expect a lot of breaking changes. We try to document migration steps in [Releases](https://github.com/supabase/cli/releases). Please file an issue if these steps don't work!
-
-## Developing
-
-To run from source:
-
-```sh
-# Go >= 1.20
-go run . help
+### צפייה בלוגים
+```bash
+docker-compose -f docker-compose-simple.yml logs -f
 ```
 
+### ניקוי קבצים כבדים
+```bash
+# Linux/macOS
+./scripts/cleanup-project.sh
+
+# Windows
+windows\cleanup-project.bat
+```
+
+## מבנה הפרויקט
+
+```
+supabase-local-package/
+├── 📁 scripts/           # סקריפטים ל-Linux/macOS
+├── 📁 windows/           # סקריפטים ל-Windows
+├── 📁 docs/              # תיעוד
+├── 📁 supabase/          # קבצי Supabase
+│   ├── 📁 migrations/    # מיגרציות בסיס נתונים
+│   ├── config.toml       # הגדרות
+│   └── seed.sql          # נתוני התחלה
+├── 📄 .env               # הגדרות סביבה
+├── 📄 docker-compose-simple.yml  # הגדרות Docker
+├── 📄 kong.yml           # Kong Gateway
+└── 📄 README.md          # תיעוד ראשי
+```
+
+## התאמה אישית
+
+### שינוי פורטים
+ערוך את הקובץ `.env` לשינוי הגדרות:
+- `POSTGRES_PORT`: פורט בסיס הנתונים
+- `KONG_HTTP_PORT`: פורט ה-API
+- `STUDIO_PORT_EXTERNAL`: פורט הממשק
+
+### הוספת מיגרציות
+הוסף קבצי SQL לתיקייה `supabase/migrations/` עם סדר מספרי:
+- `01-your-schema.sql`
+- `02-your-data.sql`
+
+### הוספת פונקציות
+הוסף פונקציות לתיקייה `supabase/functions/`.
+
+## טיפים לפיתוח
+
+1. **גיבוי:** גבה את בסיס הנתונים לפני שינויים
+2. **לוגים:** השתמש ב-Docker logs לאיתור בעיות
+3. **פיתוח:** השתמש ב-Studio לניהול בסיס נתונים ויזואלי
+4. **בדיקות:** בדוק חיבורים לפני פריסה
+
+## פתרון בעיות
+
+### שירות לא עולה
+```bash
+# בדוק סטטוס Docker
+docker ps
+
+# בדוק לוגים
+docker-compose -f docker-compose-simple.yml logs [service-name]
+```
+
+### בעיות פורט
+```bash
+# בדוק פורטים תפוסים
+netstat -an | grep [port-number]
+```
+
+### אתחול מחדש
+```bash
+# כיבוי ומחיקת ווליומים
+docker-compose -f docker-compose-simple.yml down -v
+
+# הפעלה מחדש
+docker-compose -f docker-compose-simple.yml up -d
+```
+
+## תיעוד נוסף
+
+- [תיעוד מלא](docs/INSTALL.md)
+- [מדריך התקנה](docs/INSTALL.md)
+- [Supabase Docs](https://supabase.com/docs)
+
+## רישיון
+
+פרויקט זה משתמש ברישיון קוד פתוח של Supabase.
+
+---
+
+**🎉 מוכן לפיתוח!** הפעל את הסקריפט והתחל לבנות.
